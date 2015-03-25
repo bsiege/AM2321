@@ -130,8 +130,13 @@ public:
             return false;
         humidity     = buf[2] << 8;
         humidity    += buf[3];
-        temperature  = buf[4] << 8;
-        temperature += buf[5];
+        // fixed for negative value. Code from robtilaarts DHTlib.  Tip fron arduino forum.
+        // http://forum.arduino.cc/index.php?topic=310606.0
+        temperature = word(buf[4] & 0x7F, buf[5]);
+        if (buf[4] & 0x80) // negative temperature
+        {
+            temperature = -temperature;
+        }
         return true;
     }
 };
